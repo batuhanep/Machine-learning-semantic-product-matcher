@@ -22,20 +22,6 @@ The process is divided into two main stages:
 └── README.md                       # This file
 ```
 
-## Setup
-
-1.  **Clone the repository:**
-    ```bash
-    git clone <your-repo-url>
-    cd <your-repo-name>
-    ```
-
-2.  **Install the required Python libraries:**
-    A GPU is highly recommended for the training step, but it will work on a CPU as well.
-    ```bash
-    pip install pandas openpyxl sentence-transformers scikit-learn numpy torch tqdm
-    ```
-
 ## Usage
 
 ### Step 1: Prepare Your Data
