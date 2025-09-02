@@ -7,7 +7,7 @@ from tqdm import tqdm
 print("Loading training data...")
 try:
     train_df = pd.read_excel('training_matches.xlsx')
-    # Ensure the column names are correct
+
     train_df = train_df[['product_main', 'product_matched']]
     train_df.dropna(inplace=True)
 except FileNotFoundError:
@@ -17,7 +17,6 @@ except KeyError:
     print("ERROR: 'training_matches.xlsx' must contain 'product_main' and 'product_matched' columns.")
     exit()
 
-# Create a list of InputExample objects. This is the format required by the library for training.
 # Each row represents a pair of texts that are considered a good match.
 train_examples = []
 for index, row in tqdm(train_df.iterrows(), total=len(train_df), desc="Preparing training examples"):
