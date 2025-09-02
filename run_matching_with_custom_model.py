@@ -6,7 +6,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
-# --- Helper Functions from Your Original Code (No Changes in Logic) ---
 def preprocess(text):
     if pd.isnull(text):
         return ""
