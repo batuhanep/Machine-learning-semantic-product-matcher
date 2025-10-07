@@ -40,9 +40,7 @@ def extract_volume(text):
             else: return value
     return None
 
-# --- Main Processing Workflow ---
-
-# 1. Load and Preprocess Data
+#input
 print("Loading main data for matching ('ad.xlsx')...")
 df = pd.read_excel('ad.xlsx')
 df['clean_productmain'] = df['productmain'].apply(preprocess)
@@ -51,9 +49,7 @@ df['volume_productmain'] = df['clean_productmain'].apply(extract_volume)
 df['volume_productmatch'] = df['clean_productmatch'].apply(extract_volume)
 
 
-# 2. LOAD THE FINE-TUNED MODEL
-# !!!!!!! KEY CHANGE HERE !!!!!!!
-# Instead of a pre-trained model name, we provide the path to our saved model directory.
+#fine tunned model
 MODEL_PATH = './fine_tuned_model'
 print(f"Loading our custom fine-tuned model from: {MODEL_PATH}")
 try:
@@ -63,20 +59,20 @@ except Exception as e:
     print(f"Original Error: {e}")
     exit()
 
-# 3. Create Embeddings
+# 3. create embeddngs
 print("Encoding source products (with our custom model)...")
 source_sbert_embeddings = model.encode(df['clean_productmain'].tolist(), show_progress_bar=True, batch_size=32)
 print("Encoding target products (with our custom model)...")
 target_sbert_embeddings = model.encode(df['clean_productmatch'].tolist(), show_progress_bar=True, batch_size=32)
 
-# 4. TF-IDF Component (No Changes)
+# 4. TF-IDF 
 vectorizer = TfidfVectorizer(ngram_range=(1, 2))
 all_texts = df['clean_productmain'].tolist() + df['clean_productmatch'].tolist()
 vectorizer.fit(all_texts)
 source_tfidf = vectorizer.transform(df['clean_productmain'])
 target_tfidf = vectorizer.transform(df['clean_productmatch'])
 
-# 5. Calculate Similarities and Match (No Changes in Logic)
+# 5. similarities
 print("Calculating SBERT similarities...")
 sbert_similarities = cosine_similarity(source_sbert_embeddings, target_sbert_embeddings)
 print("Calculating TF-IDF similarities...")
@@ -88,15 +84,14 @@ for i, row in tqdm(df.iterrows(), total=len(df), desc="Performing matching"):
     sbert_sims = sbert_similarities[i]
     tfidf_sims = tfidf_similarities[i]
     
-    # Hybrid scoring (you can adjust the weights based on your tests)
-    # Giving more weight to our fine-tuned model is a good idea.
+    # Hybrid scoring 
     hybrid_scores = 0.7 * sbert_sims + 0.3 * tfidf_sims
     best_idx = hybrid_scores.argmax()
     best_score = hybrid_scores[best_idx]
     
     target_volume = df.iloc[best_idx]['volume_productmatch']
     
-    # Volume bonus/penalty logic remains the same
+    # Volume bonus/penalty 
     volume_bonus = 0 
     if source_volume and target_volume:
         source_text = str(row['productmain']) if pd.notna(row['productmain']) else ""
