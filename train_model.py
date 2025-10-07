@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer, InputExample, losses
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-# 1. Load and Prepare Training Data
+# 1. training data
 print("Loading training data...")
 try:
     train_df = pd.read_excel('training_matches.xlsx')
@@ -17,7 +17,7 @@ except KeyError:
     print("ERROR: 'training_matches.xlsx' must contain 'product_main' and 'product_matched' columns.")
     exit()
 
-# Each row represents a pair of texts that are considered a good match.
+# good match
 train_examples = []
 for index, row in tqdm(train_df.iterrows(), total=len(train_df), desc="Preparing training examples"):
     text1 = str(row['product_main'])
